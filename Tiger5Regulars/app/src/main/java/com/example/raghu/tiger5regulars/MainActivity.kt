@@ -28,11 +28,6 @@ class MainActivity : AppCompatActivity(), Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        if(account==null) {
-            val intent = Intent(this@MainActivity,LoginActivity::class.java);
-            startActivity(intent)
-        }else {
             setContentView(R.layout.activity_main)
             listener = this@MainActivity
             button2.setOnClickListener({ view -> doSomething() })
@@ -88,8 +83,6 @@ class MainActivity : AppCompatActivity(), Listener {
 
                 }
             })
-        }
-
     }
 
 

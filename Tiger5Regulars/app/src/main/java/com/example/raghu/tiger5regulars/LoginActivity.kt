@@ -2,6 +2,7 @@ package com.example.raghu.tiger5regulars
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -28,10 +29,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private var PRIVATE_MODE = 0
+    private val PREF_NAME = "login"
+    private var sharedPref: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
+         sharedPref= getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         val signInButton: SignInButton = findViewById(R.id.sign_in_button)
         signInButton.setSize(SignInButton.SIZE_STANDARD)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -107,8 +112,13 @@ class LoginActivity : AppCompatActivity() {
             database = FirebaseDatabase.getInstance().reference
             val date = getCurrentDateTime()
             val dateInString = date.toStringFromat("dd/MM/yyyy")
-            writeNewUser(it.displayName, false, dateInString)
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            writeNewUser(it.uid,it.displayName, false, dateInString)
+            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+            val editor = sharedPref?.edit()
+            editor?.putString(PREF_NAME, it.displayName)
+            editor?.putString("id", it.uid)
+            editor?.apply()
+            startActivity(intent)
             finish()
         }
     }
@@ -117,17 +127,12 @@ class LoginActivity : AppCompatActivity() {
         return Calendar.getInstance().time
     }
 
-    private fun writeNewUser(name: String?, playing: Boolean, today: String) {
+    private fun writeNewUser(uid:String,name: String?, playing: Boolean, today: String) {
         val user = User(name, playing, today)
 
-        val key = database.child("Players").push().key
-        if (key == null) {
-            Log.w("LoginActivity", "Couldn't get push key for posts")
-            return
-        }
         val users = user.toMap()
         val childUpdates = HashMap<String, Any>()
-        childUpdates["/Players/$key"] = users
+        childUpdates["/Players/$uid"] = users
 
         database.updateChildren(childUpdates)
     }
