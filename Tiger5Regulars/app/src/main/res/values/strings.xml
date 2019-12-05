@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Tiger5Regulars</string>
+    <string name="loading">SignIn...</string>
 </resources>

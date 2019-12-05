@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "496994281757",
+    "firebase_url": "https://tiger5regulars.firebaseio.com",
+    "project_id": "tiger5regulars",
+    "storage_bucket": "tiger5regulars.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496994281757:android:aee7b7b7e84a0a21a7d9f4",
+        "android_client_info": {
+          "package_name": "com.example.raghu.tiger5regulars"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496994281757-5a6f279105823hb79dhapskutqm644tb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.raghu.tiger5regulars",
+            "certificate_hash": "c8098621050787ca076ce6f05f3106d66d7aa70c"
+          }
+        },
+        {
+          "client_id": "496994281757-a39q4pnllrqc6svsl58sedaigcqgni2o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXO9JvPPSR6HugRhFRsi7qssmpCXeYEY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496994281757-a7eklnfjg2tj9398gc8epqi2i6fbeqgm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
