@@ -10,17 +10,21 @@ import com.allyants.boardview.BoardAdapter
 import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
 import com.example.raghu.tiger5regulars.models.User
+import com.example.raghu.tiger5regulars.utilities.Listener
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Listener {
 
     private lateinit var boardView: BoardView
     private lateinit var boardAdapter: BoardAdapter
     private lateinit var membersList: ArrayList<String>
     private lateinit var database: DatabaseReference
+    private lateinit var listener: Listener
+    private val list = ArrayList<String>(5)
+    private val data: ArrayList<SimpleBoardAdapter.SimpleColumn> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,44 +34,29 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }else {
             setContentView(R.layout.activity_main)
-
-            database = FirebaseDatabase.getInstance().reference
-            val playersQuery = database.child("Players")
-                    .equalTo(true,"Playing")
-            membersList = ArrayList<String>()
-            playersQuery.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (players in dataSnapshot.children) {
-                        val user = players.getValue(User::class.java)
-                        val name = user?.username
-                        if (name != null) {
-                            membersList.add(name)
-                        }
-
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Getting Post failed, log a message
-                    Log.w("MainActivity", "loadPost:onCancelled", databaseError.toException())
-                    // ...
-                }
-            })
-
+            listener = this@MainActivity
             button2.setOnClickListener({ view -> doSomething() })
 
             boardView = findViewById<BoardView>(R.id.boardView)
-            val data: ArrayList<SimpleBoardAdapter.SimpleColumn> = ArrayList<SimpleBoardAdapter.SimpleColumn>()
-
-            val list = ArrayList<String>(5)
 
 
-            data.add(SimpleBoardAdapter.SimpleColumn("Team Members", membersList))
-            data.add(SimpleBoardAdapter.SimpleColumn("Team A", list))
-            data.add(SimpleBoardAdapter.SimpleColumn("Team B", list))
+            database = FirebaseDatabase.getInstance().reference
+            val ref = database.child("Players")
+            val playersQuery = ref.orderByChild("Playing").equalTo(true)
 
-            boardAdapter = SimpleBoardAdapter(this, data)
-            boardView.setAdapter(boardAdapter)
+            membersList = ArrayList<String>()
+
+            playersQuery.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    (listener as MainActivity).onSuccess(dataSnapshot)
+
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.w("MainActivity", "loadPost:onCancelled", databaseError.toException())
+                }
+            })
+
 
             boardView.setOnDragItemListener(object : BoardView.DragItemStartCallback {
                 override fun startDrag(view: View, startItemPos: Int, startColumnPos: Int) {
@@ -141,5 +130,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    override fun onSuccess(dataSnapshot: DataSnapshot?) {
+        if(dataSnapshot!=null) {
+            for (players in dataSnapshot.children) {
+                val user = players.getValue(User::class.java)
+                val name = user?.Name
+                if (name != null) {
+                    membersList.add(name)
+                }
+            }
+
+            data.add(SimpleBoardAdapter.SimpleColumn("Team Members", membersList))
+            data.add(SimpleBoardAdapter.SimpleColumn("Team A", list))
+            data.add(SimpleBoardAdapter.SimpleColumn("Team B", list))
+
+            boardAdapter = SimpleBoardAdapter(this@MainActivity, data)
+            boardView.setAdapter(boardAdapter)
+        }
+    }
+
+
 
 }
