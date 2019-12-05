@@ -2,15 +2,16 @@ package com.example.raghu.tiger5regulars
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.allyants.boardview.BoardAdapter
 import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
+import com.example.raghu.tiger5regulars.models.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -31,22 +32,33 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
 
             database = FirebaseDatabase.getInstance().reference
+            val playersQuery = database.child("Players")
+                    .equalTo(true,"Playing")
+            membersList = ArrayList<String>()
+            playersQuery.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (players in dataSnapshot.children) {
+                        val user = players.getValue(User::class.java)
+                        val name = user?.username
+                        if (name != null) {
+                            membersList.add(name)
+                        }
+
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("MainActivity", "loadPost:onCancelled", databaseError.toException())
+                    // ...
+                }
+            })
 
             button2.setOnClickListener({ view -> doSomething() })
 
             boardView = findViewById<BoardView>(R.id.boardView)
             val data: ArrayList<SimpleBoardAdapter.SimpleColumn> = ArrayList<SimpleBoardAdapter.SimpleColumn>()
-            membersList = ArrayList<String>()
-            membersList.add("Mithil")
-            membersList.add("Rahul")
-            membersList.add("Raghunandan")
-            membersList.add("Prabhav")
-            membersList.add("Raghu Amaresh")
-            membersList.add("Rishi")
-            membersList.add("Govind")
-            membersList.add("Suhas")
-            membersList.add("Ujji")
-            membersList.add("Shettar")
+
             val list = ArrayList<String>(5)
 
 
