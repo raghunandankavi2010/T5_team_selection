@@ -9,14 +9,18 @@ import com.allyants.boardview.BoardAdapter
 import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var boardView: BoardView
-    lateinit var boardAdapter: BoardAdapter
-    lateinit var membersList: ArrayList<String>
+    private lateinit var boardView: BoardView
+    private lateinit var boardAdapter: BoardAdapter
+    private lateinit var membersList: ArrayList<String>
+    private lateinit var database: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -25,6 +29,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }else {
             setContentView(R.layout.activity_main)
+
+            database = FirebaseDatabase.getInstance().reference
 
             button2.setOnClickListener({ view -> doSomething() })
 

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.raghu.tiger5regulars.models.User
-import com.example.raghu.tiger5regulars.utilities.PLAYERS_URL
 import com.example.raghu.tiger5regulars.utilities.RC_SIGN_IN
 import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
