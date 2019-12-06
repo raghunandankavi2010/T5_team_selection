@@ -63,7 +63,18 @@ class MainActivity : AppCompatActivity(), Listener {
                }
             }
 
-            override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
+            override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                val user: User? = dataSnapshot.getValue<User>(User::class.java)
+                user?.let {
+                    if(user.Playing && membersList.contains(user)){
+                        membersList.add(user)
+                        partitionTeam(membersList)
+                    }else if(!user.Playing && membersList.contains(user)) {
+                        membersList.remove(user)
+                        partitionTeam(membersList)
+                    }
+                }
+            }
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
             override fun onChildMoved(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
             override fun onCancelled(databaseError: DatabaseError) {}
