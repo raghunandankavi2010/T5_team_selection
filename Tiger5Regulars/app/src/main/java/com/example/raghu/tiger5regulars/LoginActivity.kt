@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.RC_SIGN_IN
 import com.example.raghu.tiger5regulars.utilities.toStringFromat
@@ -31,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var PRIVATE_MODE = 0
     private val PREF_NAME = "login"
-    private var sharedPref: SharedPreferences? = null
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,10 +115,10 @@ class LoginActivity : AppCompatActivity() {
             val dateInString = date.toStringFromat("dd/MM/yyyy")
             writeNewUser(it.uid,it.displayName, false, dateInString)
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-            val editor = sharedPref?.edit()
-            editor?.putString(PREF_NAME, it.displayName)
-            editor?.putString("id", it.uid)
-            editor?.apply()
+            sharedPref.edit {
+                putString(PREF_NAME, it.displayName)
+                putString("id", it.uid)
+            }
             startActivity(intent)
             finish()
         }
