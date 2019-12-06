@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), Listener {
             }
         })
 
-        playersQuery.addChildEventListener(object : ChildEventListener {
+      /*  playersQuery.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
                 val user: User? = dataSnapshot.getValue<User>(User::class.java)
                user?.let {
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), Listener {
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
             override fun onChildMoved(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
             override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        })*/
 
 
         boardView.setOnDragItemListener(object : BoardView.DragItemStartCallback {
@@ -148,6 +148,7 @@ class MainActivity : AppCompatActivity(), Listener {
             for (players in dataSnapshot.children) {
                 val user = players.getValue(User::class.java)
                 val key = players.key
+                membersList.removeAll(membersList)
                 key?.let { user?.userId = it }
                 if (user != null) {
                     membersList.add(user)
