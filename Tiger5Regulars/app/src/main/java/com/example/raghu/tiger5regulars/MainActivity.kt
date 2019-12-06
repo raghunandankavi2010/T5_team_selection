@@ -1,6 +1,5 @@
 package com.example.raghu.tiger5regulars
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -11,90 +10,98 @@ import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.Listener
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), Listener {
 
     private lateinit var boardView: BoardView
     private lateinit var boardAdapter: BoardAdapter
-    private lateinit var membersList: ArrayList<String>
+    private var membersList: ArrayList<User> = ArrayList(10)
+    private var members: ArrayList<String> = ArrayList(10)
     private lateinit var database: DatabaseReference
     private lateinit var listener: Listener
-    private val list = ArrayList<String>(5)
+    private val listA = ArrayList<String>(5)
+    private val listB = ArrayList<String>(5)
     private val data: ArrayList<SimpleBoardAdapter.SimpleColumn> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_main)
-            listener = this@MainActivity
-            button2.setOnClickListener({ view -> doSomething() })
+        setContentView(R.layout.activity_main)
+        listener = this@MainActivity
 
-            boardView = findViewById<BoardView>(R.id.boardView)
-
-
-            database = FirebaseDatabase.getInstance().reference
-            val ref = database.child("Players")
-            val playersQuery = ref.orderByChild("Playing").equalTo(true)
-
-            membersList = ArrayList<String>()
-
-            playersQuery.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    (listener as MainActivity).onSuccess(dataSnapshot)
-
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.w("MainActivity", "loadPost:onCancelled", databaseError.toException())
-                }
-            })
+        boardView = findViewById(R.id.boardView)
 
 
-            boardView.setOnDragItemListener(object : BoardView.DragItemStartCallback {
-                override fun startDrag(view: View, startItemPos: Int, startColumnPos: Int) {
 
-                }
+        database = FirebaseDatabase.getInstance().reference
+        val ref = database.child("Players")
+        val playersQuery = ref.orderByChild("Playing").equalTo(true)
 
-                override fun changedPosition(view: View, startItemPos: Int, startColumnPos: Int, newItemPos: Int, newColumnPos: Int) {
+        playersQuery.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                (listener as MainActivity).onSuccess(dataSnapshot)
 
-                }
-
-                override fun dragging(itemView: View, event: MotionEvent) {
-
-                }
-
-                override fun endDrag(view: View, startItemPos: Int, startColumnPos: Int, endItemPos: Int, endColumnPos: Int) {
-
-                    val columnAtIndex1 = boardAdapter.getColumnAtIndex(1)
-                    when {
-                        columnAtIndex1.getObjects().size >= 5 -> columnAtIndex1.items_locked = true
-                        else -> columnAtIndex1.items_locked = false
-                    }
-
-                    val columnAtIndex2 = boardAdapter.getColumnAtIndex(2)
-                    when {
-                        columnAtIndex2.getObjects().size >= 5 -> columnAtIndex2.items_locked = true
-                        else -> columnAtIndex2.items_locked = false
-                    }
-
-
-                }
-            })
-    }
-
-
-    fun doSomething() {
-        if (!check_column1()) {
-            if (boardAdapter.columnCount > 0 && boardAdapter.columns[0].objects.size > 0) {
-                val value = boardAdapter.getItemObject(0, 1)
-                boardAdapter.addItem(1, 0, value)
-                boardAdapter.removeItem(0, 1)
             }
-        }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("MainActivity", "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
+        playersQuery.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                val user: User? = dataSnapshot.getValue<User>(User::class.java)
+               user?.let {
+                   if(membersList.size==0 || !membersList.contains(user)){
+                       membersList.add(user)
+                       partitionTeam(membersList)
+                   }
+               }
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
+            override fun onChildMoved(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+
+
+        boardView.setOnDragItemListener(object : BoardView.DragItemStartCallback {
+            override fun startDrag(view: View, startItemPos: Int, startColumnPos: Int) {
+
+            }
+
+            override fun changedPosition(view: View, startItemPos: Int, startColumnPos: Int, newItemPos: Int, newColumnPos: Int) {
+
+            }
+
+            override fun dragging(itemView: View, event: MotionEvent) {
+
+            }
+
+            override fun endDrag(view: View, startItemPos: Int, startColumnPos: Int, endItemPos: Int, endColumnPos: Int) {
+
+                val columnAtIndex1 = boardAdapter.getColumnAtIndex(1)
+                when {
+                    columnAtIndex1.getObjects().size >= 5 -> columnAtIndex1.items_locked = true
+                    else -> columnAtIndex1.items_locked = false
+                }
+
+                val columnAtIndex2 = boardAdapter.getColumnAtIndex(2)
+                when {
+                    columnAtIndex2.getObjects().size >= 5 -> columnAtIndex2.items_locked = true
+                    else -> columnAtIndex2.items_locked = false
+                }
+
+
+            }
+        })
     }
+
 
     fun check_column1(): Boolean {
         val columnAtIndex1 = boardAdapter.getColumnAtIndex(1)
@@ -126,24 +133,52 @@ class MainActivity : AppCompatActivity(), Listener {
 
 
     override fun onSuccess(dataSnapshot: DataSnapshot?) {
-        if(dataSnapshot!=null) {
+        if (dataSnapshot != null) {
             for (players in dataSnapshot.children) {
                 val user = players.getValue(User::class.java)
-                val name = user?.Name
-                if (name != null) {
-                    membersList.add(name)
+                val key = players.key
+                key?.let { user?.userId = it }
+                if (user != null) {
+                    membersList.add(user)
                 }
             }
 
-            data.add(SimpleBoardAdapter.SimpleColumn("Team Members", membersList))
-            data.add(SimpleBoardAdapter.SimpleColumn("Team A", list))
-            data.add(SimpleBoardAdapter.SimpleColumn("Team B", list))
+            partitionTeam(membersList)
+            data.add(SimpleBoardAdapter.SimpleColumn("Team Members", members))
+            data.add(SimpleBoardAdapter.SimpleColumn("Team A", listA))
+            data.add(SimpleBoardAdapter.SimpleColumn("Team B", listB))
 
             boardAdapter = SimpleBoardAdapter(this@MainActivity, data)
             boardView.setAdapter(boardAdapter)
         }
     }
 
+    private fun partitionTeam(mem: ArrayList<User>) {
 
+        for (i in 0 until mem.size) {
+            val user = mem[i]
+            val userid = user.userId
+            val date = getCurrentDateTime()
+            val dateInString = date.toStringFromat("dd/MM/yyyy")
+            val array : Array<String?> = arrayOf(dateInString,userid)
+            val hashLong = hash(array)
+            user.Name?.let { members.add(it) }
+            if (hashLong % 2 == 0L) {
+                user.Name?.let { listA.add(it) }
+            } else {
+                user.Name?.let { listB.add(it) }
+            }
+        }
+    }
+
+    fun hash(values: Array<String?>): Long {
+        var result: Long = 17
+        for (v in values) result = 37 * result + v.hashCode()
+        return result
+    }
+
+    private fun getCurrentDateTime(): Date {
+        return Calendar.getInstance().time
+    }
 
 }

@@ -5,7 +5,8 @@ import com.google.firebase.database.Exclude
 data class User(
         var Name: String? = "",
         var Playing: Boolean = false,
-        var Today: String? = ""
+        var Today: String? = "",
+        var userId:String =""
 ){
     @Exclude
     fun toMap(): Map<String, Any?> {

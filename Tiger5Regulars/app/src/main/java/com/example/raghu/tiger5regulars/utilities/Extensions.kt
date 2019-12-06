@@ -7,3 +7,4 @@ fun Date.toStringFromat(format: String, locale: Locale = Locale.getDefault()): S
     val formatter = SimpleDateFormat(format, locale)
     return formatter.format(this)
 }
+
