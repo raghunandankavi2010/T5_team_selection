@@ -2,12 +2,10 @@ package com.example.raghu.tiger5regulars
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
@@ -15,13 +13,11 @@ import kotlinx.android.synthetic.main.activity_home.*
 import java.util.*
 
 
-
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private val PREF_NAME = "login"
     private var PRIVATE_MODE = 0
-    private var sharedPref: SharedPreferences? = null
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +53,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun update(name:String?,playing:Boolean,uid:String?){
 
-
         val objRef = database.child("Players")
         uid?.let {
          objRef.child(it).child("Playing").setValue(playing)
@@ -85,10 +80,6 @@ class HomeActivity : AppCompatActivity() {
                 Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
             }
         })
-    }
-
-    private fun getCurrentDateTime(): Date {
-        return Calendar.getInstance().time
     }
 
 }
