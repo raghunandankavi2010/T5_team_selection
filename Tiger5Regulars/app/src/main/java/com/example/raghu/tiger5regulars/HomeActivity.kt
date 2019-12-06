@@ -6,11 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.Constraints
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
-
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class HomeActivity : AppCompatActivity() {
@@ -30,6 +34,27 @@ class HomeActivity : AppCompatActivity() {
             setContentView(R.layout.activity_home)
             val sharedPref: SharedPreferences = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
             database = FirebaseDatabase.getInstance().reference
+
+            val constraints = Constraints.Builder()
+                    .setRequiresCharging(true)
+                    .build()
+
+            val currentDate = Calendar.getInstance()
+            val dueDate = Calendar.getInstance()
+            dueDate.set(Calendar.AM_PM,Calendar.PM)
+            dueDate.set(Calendar.HOUR_OF_DAY, 12)
+            dueDate.set(Calendar.MINUTE, 0)
+            dueDate.set(Calendar.SECOND, 0)
+            if (dueDate.before(currentDate)) {
+                dueDate.add(Calendar.HOUR_OF_DAY, 24)
+            }
+            val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
+            val dailyWorkRequest = OneTimeWorkRequestBuilder<DailyWorker>()
+                    .setConstraints(constraints)
+                    .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
+                    .addTag("TAG_OUTPUT")
+                    .build()
+            WorkManager.getInstance(applicationContext).enqueue(dailyWorkRequest)
             checkCount()
             switch_btn.visibility = View.GONE
             switch_btn.setOnCheckedChangeListener { _, isChecked ->
