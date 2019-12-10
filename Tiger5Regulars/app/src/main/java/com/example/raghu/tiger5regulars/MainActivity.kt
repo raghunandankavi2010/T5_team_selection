@@ -1,9 +1,10 @@
 package com.example.raghu.tiger5regulars
 
+import android.R.id.toggle
 import android.content.Intent
-
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -217,6 +218,12 @@ class MainActivity : AppCompatActivity(), Listener {
 
     private fun getCurrentDateTime(): Date {
         return Calendar.getInstance().time
+    }
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item != null && item.itemId == android.R.id.home) {
+           finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }
