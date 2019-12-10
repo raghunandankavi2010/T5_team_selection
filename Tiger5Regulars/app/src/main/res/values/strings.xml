@@ -3,4 +3,5 @@
     <string name="loading">SignIn...</string>
     <string name="title_login_activity">LoginActivity</string>
     <string name="do_you_want_to_play_today">Do you want to play today?</string>
+    <string name="user">Log Out</string>
 </resources>

@@ -1,16 +1,21 @@
 package com.example.raghu.tiger5regulars
 
+
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
 import java.util.*
@@ -23,6 +28,7 @@ class HomeActivity : AppCompatActivity() {
     private val PREF_NAME = "login"
     private var PRIVATE_MODE = 0
     private var count = 0
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -32,6 +38,7 @@ class HomeActivity : AppCompatActivity() {
             finish()
         }else {
             setContentView(R.layout.activity_home)
+            auth = FirebaseAuth.getInstance()
             val sharedPref: SharedPreferences = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
             database = FirebaseDatabase.getInstance().reference
 
@@ -74,6 +81,22 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean { // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.home_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val id: Int = item.getItemId()
+        if (id == R.id.action_logout) {
+            auth.signOut()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun update(name:String?,playing:Boolean,uid:String?){
