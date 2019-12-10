@@ -5,9 +5,16 @@
     tools:context=".MainActivity">
 
     <item
+        android:icon="@drawable/ic_logout"
         android:id="@+id/action_logout"
         android:orderInCategory="300"
         android:title="@string/user"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/ic_settings"
+        android:id="@+id/action_settings"
+        android:orderInCategory="300"
+        android:title="@string/settings"
         app:showAsAction="ifRoom" />
 
 </menu>

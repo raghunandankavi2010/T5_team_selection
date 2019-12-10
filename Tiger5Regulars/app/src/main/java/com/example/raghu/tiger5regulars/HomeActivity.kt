@@ -12,10 +12,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.raghu.tiger5regulars.utilities.PREF_NAME
+import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_home.toolbar
+
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -23,8 +27,6 @@ import java.util.concurrent.TimeUnit
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
-    private val PREF_NAME = "login"
-    private var PRIVATE_MODE = 0
     private var count = 0
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +38,14 @@ class HomeActivity : AppCompatActivity() {
             finish()
         } else {
             setContentView(R.layout.activity_home)
+            setSupportActionBar(toolbar)
+
+            supportActionBar?.let {
+                title = "Ready to Play?"
+                it.setDisplayHomeAsUpEnabled(true)
+                it.setDisplayShowHomeEnabled(true)
+                it.setHomeAsUpIndicator(R.drawable.ic_home)
+            }
 
             val sharedPref: SharedPreferences = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
             database = FirebaseDatabase.getInstance().reference
@@ -96,6 +106,9 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
             return true
+        }else if(id == R.id.action_settings){
+            val intent = Intent(this@HomeActivity, SettingsActivity::class.java)
+            startActivity(intent)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -124,6 +137,9 @@ class HomeActivity : AppCompatActivity() {
                     switch_btn.visibility = View.VISIBLE
                     progressBar.visibility = View.GONE
 
+                }else{
+                    switch_btn.visibility = View.GONE
+                    progressBar.visibility = View.GONE
                 }
             }
 

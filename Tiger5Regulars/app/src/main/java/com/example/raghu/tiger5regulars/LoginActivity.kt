@@ -3,7 +3,6 @@ package com.example.raghu.tiger5regulars
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.models.UserProfile
+import com.example.raghu.tiger5regulars.utilities.PREF_NAME
+import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
 import com.example.raghu.tiger5regulars.utilities.RC_SIGN_IN
 import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -34,14 +35,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
-    private var PRIVATE_MODE = 0
-    private val PREF_NAME = "login"
     private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
-         sharedPref= getSharedPreferences(PREF_NAME, PRIVATE_MODE)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Login to your google Account"
+        sharedPref = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         val signInButton: SignInButton = findViewById(R.id.sign_in_button)
         signInButton.setSize(SignInButton.SIZE_STANDARD)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -49,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
                 .requestEmail()
                 .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        auth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance()
         signInButton.setOnClickListener {
             signIn()
         }
@@ -58,26 +59,21 @@ class LoginActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
+
                 Log.w("LoginActivity", "Google sign in failed", e)
-                // [START_EXCLUDE]
+
                 updateUI(null)
-                // [END_EXCLUDE]
+
             }
         }
     }
-    // [END onactivityresult]
 
-    // [START auth_with_google]
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         Log.d("LoginActivity", "firebaseAuthWithGoogle:" + acct.id!!)
         showProgress()
@@ -86,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d("LoginActivity", "signInWithCredential:success")
                         val user = auth.currentUser
                         updateUI(user)
@@ -112,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
             postUserDetails(user)
             val date = getCurrentDateTime()
             val dateInString = date.toStringFromat("dd/MM/yyyy")
-            writeNewUser(it.uid,it.displayName, false, dateInString)
+            writeNewUser(it.uid, it.displayName, false, dateInString)
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
             sharedPref.edit {
                 putString(PREF_NAME, it.displayName)
@@ -130,11 +125,11 @@ class LoginActivity : AppCompatActivity() {
         val userPhoneNumber = user.phoneNumber
         val userEmail = user.email
         val userID = user.uid
-        writeUserProfileDetails(userID,userName,userPhoneNumber,userEmail,userPhoto);
+        writeUserProfileDetails(userID, userName, userPhoneNumber, userEmail, userPhoto)
     }
 
     private fun writeUserProfileDetails(userID: String, userName: String?, userPhoneNumber: String?, userEmail: String?, userPhoto: String?) {
-        val userProfile = UserProfile(userName, userEmail, userPhoneNumber,userPhoto)
+        val userProfile = UserProfile(userName, userEmail, userPhoneNumber, userPhoto)
         val profile = userProfile.toMap()
         val childUpdates = HashMap<String, Any>()
         childUpdates["/PlayersProfile/$userID"] = profile
@@ -146,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
         return Calendar.getInstance().time
     }
 
-    private fun writeNewUser(uid:String,name: String?, playing: Boolean, today: String) {
+    private fun writeNewUser(uid: String, name: String?, playing: Boolean, today: String) {
         val user = User(name, playing, today)
 
         val users = user.toMap()
@@ -163,7 +158,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun hideProgress() {
-        progressBar.visibility= View.INVISIBLE
+        progressBar.visibility = View.INVISIBLE
         sign_in_button.isEnabled = true
     }
 }

@@ -1,5 +1,7 @@
 package com.example.raghu.tiger5regulars
 
+import android.content.Intent
+
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -12,6 +14,7 @@ import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.Listener
 import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -33,10 +36,15 @@ class MainActivity : AppCompatActivity(), Listener {
         setContentView(R.layout.activity_main)
         listener = this@MainActivity
 
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.let {
+            title = "Team Players"
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowHomeEnabled(true)
+        }
+
         boardView = findViewById(R.id.boardView)
-
-
-
         database = FirebaseDatabase.getInstance().reference
         val ref = database.child("Players")
         val playersQuery = ref.orderByChild("Playing").equalTo(true)
@@ -80,6 +88,16 @@ class MainActivity : AppCompatActivity(), Listener {
             override fun onCancelled(databaseError: DatabaseError) {}
         })*/
 
+        boardView.setOnItemClickListener { v, column_pos, item_pos ->
+
+            if(membersList.size>0 && column_pos==0){
+
+                val userId = membersList[item_pos].userId
+                val intent = Intent(this@MainActivity,UserDetails::class.java)
+                intent.putExtra("userid",userId)
+                startActivity(intent)
+            }
+        }
 
         boardView.setOnDragItemListener(object : BoardView.DragItemStartCallback {
             override fun startDrag(view: View, startItemPos: Int, startColumnPos: Int) {

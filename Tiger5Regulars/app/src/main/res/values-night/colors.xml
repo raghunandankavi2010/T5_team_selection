@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- app palette -->
+    <color name="colorPrimary">#8BCAF3</color>
+    <color name="colorPrimaryDark">#000000</color> >
+    <color name="colorAccent">#FF4081</color>
+    <color name="hamburgerIconColor">#ffffff</color>
+
+</resources>
