@@ -163,15 +163,22 @@ class MainActivity : AppCompatActivity(), Listener {
 
     override fun onSuccess(dataSnapshot: DataSnapshot?) {
         if (dataSnapshot != null) {
+            if(membersList.size>0){
+                membersList.removeAll(membersList)
+                members.removeAll(members)
+                listA.removeAll(listA)
+                listB.removeAll(listB)
+                data.removeAll(data)
+            }
             for (players in dataSnapshot.children) {
                 val user = players.getValue(User::class.java)
                 val key = players.key
-                membersList.removeAll(membersList)
                 key?.let { user?.userId = it }
                 if (user != null) {
                     membersList.add(user)
                 }
             }
+
 
             partitionTeam(membersList)
             data.add(SimpleBoardAdapter.SimpleColumn("Team Members", members))
@@ -192,6 +199,7 @@ class MainActivity : AppCompatActivity(), Listener {
             val dateInString = date.toStringFromat("dd/MM/yyyy")
             val array : Array<String?> = arrayOf(dateInString,userid)
             val hashLong = hash(array)
+            Log.i("hashCode",""+hashLong)
             user.Name?.let { members.add(it) }
             if (hashLong % 2 == 0L) {
                 user.Name?.let { listA.add(it) }

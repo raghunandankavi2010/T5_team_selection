@@ -89,6 +89,10 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+
+        viewTeam.setOnClickListener {
+            startActivity(Intent(this@HomeActivity, MainActivity::class.java))
+        }
     }
 
 
@@ -136,10 +140,11 @@ class HomeActivity : AppCompatActivity() {
                 if (count in 1..10 || count == 0) {
                     switch_btn.visibility = View.VISIBLE
                     progressBar.visibility = View.GONE
-
+                    viewTeam.visibility = View.GONE
                 }else{
                     switch_btn.visibility = View.GONE
                     progressBar.visibility = View.GONE
+                    viewTeam.visibility = View.VISIBLE
                 }
             }
 
