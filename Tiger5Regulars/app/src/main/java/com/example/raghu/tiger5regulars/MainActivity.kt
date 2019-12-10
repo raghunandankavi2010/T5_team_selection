@@ -1,5 +1,6 @@
 package com.example.raghu.tiger5regulars
 
+import android.R.id.toggle
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +13,9 @@ import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.Listener
+import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -196,7 +197,8 @@ class MainActivity : AppCompatActivity(), Listener {
             val user = mem[i]
             val userid = user.userId
             val date = getCurrentDateTime()
-            val array : Array<String?> = arrayOf(date,userid)
+            val dateInString = date.toStringFromat("dd/MM/yyyy")
+            val array : Array<String?> = arrayOf(dateInString,userid)
             val hashLong = hash(array)
             Log.i("hashCode",""+hashLong)
             user.Name?.let { members.add(it) }
@@ -214,10 +216,8 @@ class MainActivity : AppCompatActivity(), Listener {
         return result
     }
 
-    private fun getCurrentDateTime(): String {
-        val df = DateFormat.getTimeInstance()
-        df.timeZone = TimeZone.getTimeZone("gmt")
-        return df.format( Date())
+    private fun getCurrentDateTime(): Date {
+        return Calendar.getInstance().time
     }
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item != null && item.itemId == android.R.id.home) {
