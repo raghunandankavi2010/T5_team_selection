@@ -31,14 +31,14 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        if(account==null) {
+        auth = FirebaseAuth.getInstance()
+        if(auth.currentUser==null) {
             val intent = Intent(this@HomeActivity,LoginActivity::class.java)
             startActivity(intent)
             finish()
         }else {
             setContentView(R.layout.activity_home)
-            auth = FirebaseAuth.getInstance()
+
             val sharedPref: SharedPreferences = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
             database = FirebaseDatabase.getInstance().reference
 
@@ -94,6 +94,9 @@ class HomeActivity : AppCompatActivity() {
         val id: Int = item.getItemId()
         if (id == R.id.action_logout) {
             auth.signOut()
+            val intent = Intent(this@HomeActivity,LoginActivity::class.java)
+            startActivity(intent)
+            finish()
             return true
         }
         return super.onOptionsItemSelected(item)
