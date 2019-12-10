@@ -1,13 +1,16 @@
 package com.example.raghu.tiger5regulars
 
-import android.app.ProgressDialog
+
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import com.example.raghu.tiger5regulars.models.User
+import com.example.raghu.tiger5regulars.models.UserProfile
 import com.example.raghu.tiger5regulars.utilities.RC_SIGN_IN
 import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,7 +23,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.login.*
 import java.util.*
 
@@ -76,9 +80,7 @@ class LoginActivity : AppCompatActivity() {
     // [START auth_with_google]
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         Log.d("LoginActivity", "firebaseAuthWithGoogle:" + acct.id!!)
-        // [START_EXCLUDE silent]
-        showProgressDialog()
-        // [END_EXCLUDE]
+        showProgress()
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         auth.signInWithCredential(credential)
@@ -95,14 +97,10 @@ class LoginActivity : AppCompatActivity() {
                         updateUI(null)
                     }
 
-                    // [START_EXCLUDE]
-                    hideProgressDialog()
-                    // [END_EXCLUDE]
+                    hideProgress()
                 }
     }
-    // [END auth_with_google]
 
-    // [START signin]
     private fun signIn() {
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -111,6 +109,7 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUI(user: FirebaseUser?) {
         user?.let {
             database = FirebaseDatabase.getInstance().reference
+            postUserDetails(user)
             val date = getCurrentDateTime()
             val dateInString = date.toStringFromat("dd/MM/yyyy")
             writeNewUser(it.uid,it.displayName, false, dateInString)
@@ -122,6 +121,25 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    private fun postUserDetails(user: FirebaseUser) {
+
+        val userName = user.displayName
+        val userPhoto = user.photoUrl.toString()
+        val userPhoneNumber = user.phoneNumber
+        val userEmail = user.email
+        val userID = user.uid
+        writeUserProfileDetails(userID,userName,userPhoneNumber,userEmail,userPhoto);
+    }
+
+    private fun writeUserProfileDetails(userID: String, userName: String?, userPhoneNumber: String?, userEmail: String?, userPhoto: String?) {
+        val userProfile = UserProfile(userName, userEmail, userPhoneNumber,userPhoto)
+        val profile = userProfile.toMap()
+        val childUpdates = HashMap<String, Any>()
+        childUpdates["/PlayersProfile/$userID"] = profile
+
+        database.updateChildren(childUpdates)
     }
 
     private fun getCurrentDateTime(): Date {
@@ -138,20 +156,14 @@ class LoginActivity : AppCompatActivity() {
         database.updateChildren(childUpdates)
     }
 
-    val progressDialog by lazy {
-        ProgressDialog(this)
+
+    fun showProgress() {
+        progressBar.visibility = View.VISIBLE
+        sign_in_button.isEnabled = false
     }
 
-    fun showProgressDialog() {
-        progressDialog.setMessage(getString(R.string.loading))
-        progressDialog.isIndeterminate = true
-        progressDialog.show()
-    }
-
-    fun hideProgressDialog() {
-        if (progressDialog.isShowing) {
-            progressDialog.dismiss()
-
-        }
+    fun hideProgress() {
+        progressBar.visibility= View.INVISIBLE
+        sign_in_button.isEnabled = true
     }
 }
