@@ -10,3 +10,5 @@ Android application to select team for those who play football at Tiger5.
 
 1. Check for network connectivity.
 2. Improve ui.
+
+App Icon Credit to https://www.flaticon.com/authors/nikita-golubev
