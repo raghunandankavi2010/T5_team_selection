@@ -8,9 +8,5 @@ Android application to select team for those who play football at Tiger5.
 
 # Todo
 
-1. Check for network connectivity
-2. Add more user information to db.
-3. Display a profile screen.
-4. Display settings Screen.
-5. Add Support for DarkMode.
-6. Improve ui.
+1. Check for network connectivity.
+2. Improve ui.
