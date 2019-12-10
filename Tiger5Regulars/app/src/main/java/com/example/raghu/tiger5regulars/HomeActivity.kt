@@ -8,12 +8,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -32,11 +30,11 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-        if(auth.currentUser==null) {
-            val intent = Intent(this@HomeActivity,LoginActivity::class.java)
+        if (auth.currentUser == null) {
+            val intent = Intent(this@HomeActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
-        }else {
+        } else {
             setContentView(R.layout.activity_home)
 
             val sharedPref: SharedPreferences = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
@@ -48,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
 
             val currentDate = Calendar.getInstance()
             val dueDate = Calendar.getInstance()
-            dueDate.set(Calendar.AM_PM,Calendar.PM)
+            dueDate.set(Calendar.AM_PM, Calendar.PM)
             dueDate.set(Calendar.HOUR_OF_DAY, 12)
             dueDate.set(Calendar.MINUTE, 0)
             dueDate.set(Calendar.SECOND, 0)
@@ -65,17 +63,17 @@ class HomeActivity : AppCompatActivity() {
             checkCount()
             switch_btn.visibility = View.GONE
             switch_btn.setOnCheckedChangeListener { _, isChecked ->
-                if(count in 1..10){
-                    update(sharedPref.getString(PREF_NAME,null),isChecked,sharedPref.getString("id",null))
-                }else{
-                    if(!isChecked) {
+                if (count in 1..10) {
+                    update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
+                } else {
+                    if (!isChecked) {
                         switch_btn.isChecked = false
-                        update(sharedPref.getString(PREF_NAME,null),isChecked,sharedPref.getString("id",null))
+                        update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
 
-                    }else if(isChecked && count==0){
-                        update(sharedPref.getString(PREF_NAME,null),isChecked,sharedPref.getString("id",null))
+                    } else if (isChecked && count == 0) {
+                        update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
 
-                    }else{
+                    } else {
                         Snackbar.make(root, "Cannot include already 10 people are in", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -91,10 +89,10 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        val id: Int = item.getItemId()
+        val id: Int = item.itemId
         if (id == R.id.action_logout) {
             auth.signOut()
-            val intent = Intent(this@HomeActivity,LoginActivity::class.java)
+            val intent = Intent(this@HomeActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
             return true
@@ -102,12 +100,12 @@ class HomeActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun update(name:String?,playing:Boolean,uid:String?){
+    private fun update(name: String?, playing: Boolean, uid: String?) {
 
         val objRef = database.child("Players")
         uid?.let {
-         objRef.child(it).child("Playing").setValue(playing)
-            startActivity(Intent(this@HomeActivity,MainActivity::class.java))
+            objRef.child(it).child("Playing").setValue(playing)
+            startActivity(Intent(this@HomeActivity, MainActivity::class.java))
         }
     }
 
@@ -119,13 +117,15 @@ class HomeActivity : AppCompatActivity() {
         playersQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var count = 0
-                    for (players in dataSnapshot.children) {
-                        count++
-                    }
-                if(count in 1..10 || count==0){
+                for (players in dataSnapshot.children) {
+                    count++
+                }
+                if (count in 1..10 || count == 0) {
                     switch_btn.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
+
                 }
-                }
+            }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
