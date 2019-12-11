@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
 import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
@@ -27,6 +27,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private var count = 0
     private lateinit var auth: FirebaseAuth
+    private lateinit var sharedPref: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -45,9 +47,34 @@ class HomeActivity : AppCompatActivity() {
                 it.setHomeAsUpIndicator(R.drawable.ic_home)
             }
 
-            val sharedPref: SharedPreferences = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
+            sharedPref = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
+
             database = FirebaseDatabase.getInstance().reference
 
+            val userId = sharedPref.getString("id", null)
+            if (userId != null) {
+                val isUserPlaying = database.child("Players").child(userId)
+                isUserPlaying.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        progressBar.visibility = View.GONE
+                        val user = dataSnapshot.getValue(User::class.java)
+                        user?.let {
+                            switch_btn.visibility = View.VISIBLE
+                            switch_btn.setChecked(checked = user.Playing, alsoNotify = false)
+                            if (user.Playing) {
+                                switch_btn.text = getString(R.string.joined)
+                            } else {
+                                switch_btn.text = getString(R.string.notjoining)
+                            }
+                        }
+                        isUserPlaying.removeEventListener(this)
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.w("HomeActivtiy", "loadPost:onCancelled", databaseError.toException())
+                    }
+                })
+            }
             val constraints = Constraints.Builder()
                     .setRequiresCharging(true)
                     .build()
@@ -68,31 +95,16 @@ class HomeActivity : AppCompatActivity() {
                     .addTag("TAG_OUTPUT")
                     .build()
             WorkManager.getInstance(applicationContext).enqueue(dailyWorkRequest)
-            checkCount()
-            switch_btn.visibility = View.GONE
             switch_btn.setOnCheckedChangeListener { _, isChecked ->
-                if (count in 1..10) {
-                    update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
-                } else {
-                    if (!isChecked) {
-                        switch_btn.isChecked = false
-                        update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
-
-                    } else if (isChecked && count == 0) {
-                        update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
-
-                    } else {
-                        Snackbar.make(root, "Cannot include already 10 people are in", Snackbar.LENGTH_SHORT).show()
-                    }
-                }
+                    checkCount(isChecked)
             }
             viewTeam.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, MainActivity::class.java))
             }
         }
 
-
     }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean { // Inflate the menu; this adds items to the action bar if it is present.
@@ -109,9 +121,6 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
             return true
-        }else if(id == R.id.action_settings){
-            val intent = Intent(this@HomeActivity, SettingsActivity::class.java)
-            startActivity(intent)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -121,29 +130,38 @@ class HomeActivity : AppCompatActivity() {
         val objRef = database.child("Players")
         uid?.let {
             objRef.child(it).child("Playing").setValue(playing)
-            startActivity(Intent(this@HomeActivity, MainActivity::class.java))
+            objRef.addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    objRef.removeEventListener(this)
+                }
+
+            })
+
         }
     }
 
-    private fun checkCount() {
+    private fun checkCount(isChecked: Boolean) {
         val ref = database.child("Players")
         val playersQuery = ref.orderByChild("Playing").equalTo(true)
-
-
         playersQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                var count = 0
-                for (players in dataSnapshot.children) {
-                    count++
-                }
-                if (count in 1..10 || count == 0) {
-                    switch_btn.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-                    viewTeam.visibility = View.GONE
+                count = dataSnapshot.children.count()
+                Log.i("HomeActivity",""+count)
+                if (isChecked && count < 10) {
+                    update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
+                    playersQuery.removeEventListener(this)
+                    switch_btn.setChecked(checked = true, alsoNotify = false)
+                    switch_btn.text = getString(R.string.joined)
+                } else if (!isChecked) {
+                    switch_btn.setChecked(checked = false, alsoNotify = false)
+                    update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
+                    playersQuery.removeEventListener(this)
+                    switch_btn.text = getString(R.string.notjoining)
                 }else{
-                    switch_btn.visibility = View.GONE
-                    progressBar.visibility = View.GONE
-                    viewTeam.visibility = View.VISIBLE
+                    switch_btn.setChecked(checked = false, alsoNotify = false)
                 }
             }
 
@@ -152,5 +170,4 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
-
 }

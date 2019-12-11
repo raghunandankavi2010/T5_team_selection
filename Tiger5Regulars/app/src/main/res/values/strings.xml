@@ -6,5 +6,9 @@
     <string name="user">Log Out</string>
     <string name="settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="view_team">View Team</string>
+    <string name="joined">You have already joined to play today</string>
+    <string name="notjoining">Do you want to play Today?</string>
+    <string name="info">If 10 people have already joined, when you check the checkbox it becomes disabled. If not to join check the check box. To view Team click the View Team Button.</string>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.example.raghu.tiger5regulars
 
-import android.R.id.toggle
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -193,6 +192,7 @@ class MainActivity : AppCompatActivity(), Listener {
 
     private fun partitionTeam(mem: ArrayList<User>) {
 
+        Log.i("Size",""+mem.size)
         for (i in 0 until mem.size) {
             val user = mem[i]
             val userid = user.userId
@@ -200,9 +200,9 @@ class MainActivity : AppCompatActivity(), Listener {
             val dateInString = date.toStringFromat("dd/MM/yyyy")
             val array : Array<String?> = arrayOf(dateInString,userid)
             val hashLong = hash(array)
-            Log.i("hashCode",""+hashLong)
+            Log.i("hashCode",""+hashLong+" "+user.Name)
             user.Name?.let { members.add(it) }
-            if (hashLong % 2 == 0L) {
+            if (i % 2 == 0) {
                 user.Name?.let { listA.add(it) }
             } else {
                 user.Name?.let { listB.add(it) }

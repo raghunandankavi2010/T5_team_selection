@@ -2,5 +2,5 @@
 <resources>
 
     <color name="shadowColor">#CAFFFFFF</color>
-    <color name="white">#010918</color>
+    <color name="white">#000000</color>
 </resources>
