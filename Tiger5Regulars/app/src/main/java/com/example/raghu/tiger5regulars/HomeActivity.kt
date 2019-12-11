@@ -152,17 +152,19 @@ class HomeActivity : AppCompatActivity() {
                 Log.i("HomeActivity",""+count)
                 if (isChecked && count < 10) {
                     update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
-                    playersQuery.removeEventListener(this)
                     switch_btn.setChecked(checked = true, alsoNotify = false)
                     switch_btn.text = getString(R.string.joined)
+                    playersQuery.removeEventListener(this)
                 } else if (!isChecked) {
                     switch_btn.setChecked(checked = false, alsoNotify = false)
                     update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
-                    playersQuery.removeEventListener(this)
                     switch_btn.text = getString(R.string.notjoining)
+                    playersQuery.removeEventListener(this)
                 }else{
                     switch_btn.setChecked(checked = false, alsoNotify = false)
+                    playersQuery.removeEventListener(this)
                 }
+
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
