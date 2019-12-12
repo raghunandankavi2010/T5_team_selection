@@ -16,6 +16,7 @@ import androidx.work.WorkManager
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
 import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
@@ -176,7 +177,9 @@ class HomeActivity : AppCompatActivity() {
                     update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
                     switch_btn.text = getString(R.string.notjoining)
                     playersQuery.removeEventListener(this)
-                }else{
+                }else if(count==10){
+                    Snackbar.make(root,"Already 10 players have joined!. Try again later if someone cancels his spot",Snackbar.LENGTH_LONG).show()
+                    switch_btn.isChecked = false
                     playersQuery.removeEventListener(this)
                 }
 
