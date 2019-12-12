@@ -21,7 +21,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <com.example.raghu.tiger5regulars.CheckBox
+    <CheckBox
         android:id="@+id/switch_btn"
         style="@style/Widget.MaterialComponents.CompoundButton.CheckBox"
         android:layout_width="wrap_content"

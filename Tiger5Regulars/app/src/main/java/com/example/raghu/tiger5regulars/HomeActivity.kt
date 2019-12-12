@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
@@ -51,30 +52,6 @@ class HomeActivity : AppCompatActivity() {
 
             database = FirebaseDatabase.getInstance().reference
 
-            val userId = sharedPref.getString("id", null)
-            if (userId != null) {
-                val isUserPlaying = database.child("Players").child(userId)
-                isUserPlaying.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        progressBar.visibility = View.GONE
-                        val user = dataSnapshot.getValue(User::class.java)
-                        user?.let {
-                            switch_btn.visibility = View.VISIBLE
-                            switch_btn.setChecked(checked = user.Playing, alsoNotify = false)
-                            if (user.Playing) {
-                                switch_btn.text = getString(R.string.joined)
-                            } else {
-                                switch_btn.text = getString(R.string.notjoining)
-                            }
-                        }
-                        isUserPlaying.removeEventListener(this)
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.w("HomeActivtiy", "loadPost:onCancelled", databaseError.toException())
-                    }
-                })
-            }
             val constraints = Constraints.Builder()
                     .setRequiresCharging(true)
                     .build()
@@ -95,8 +72,12 @@ class HomeActivity : AppCompatActivity() {
                     .addTag("TAG_OUTPUT")
                     .build()
             WorkManager.getInstance(applicationContext).enqueue(dailyWorkRequest)
-            switch_btn.setOnCheckedChangeListener { _, isChecked ->
+            switch_btn.setOnClickListener { view ->
+                if (view is CheckBox) {
+                    val isChecked = view.isChecked
                     checkCount(isChecked)
+                }
+
             }
             viewTeam.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, MainActivity::class.java))
@@ -105,7 +86,35 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        val userId = sharedPref.getString("id", null)
+        if (userId != null) {
+            val isUserPlaying = database.child("Players").child(userId)
+            isUserPlaying.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    progressBar.visibility = View.GONE
+                    val user = dataSnapshot.getValue(User::class.java)
+                    user?.let {
+                        switch_btn.visibility = View.VISIBLE
+                        if (user.Playing) {
+                            switch_btn.isChecked = true
+                            switch_btn.text = getString(R.string.joined)
+                        } else {
+                            switch_btn.isChecked = false
+                            switch_btn.text = getString(R.string.notjoining)
+                        }
+                    }
+                    isUserPlaying.removeEventListener(this)
+                }
 
+                override fun onCancelled(databaseError: DatabaseError) {
+                    isUserPlaying.removeEventListener(this)
+                    Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
+                }
+            })
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean { // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.home_menu, menu)
@@ -114,13 +123,20 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        val id: Int = item.itemId
-        if (id == R.id.action_logout) {
-            auth.signOut()
-            val intent = Intent(this@HomeActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-            return true
+        when(item.itemId){
+             R.id.action_logout -> {
+                 auth.signOut()
+                 val intent = Intent(this@HomeActivity, LoginActivity::class.java)
+                 startActivity(intent)
+                 finish()
+                 return true
+             }
+            R.id.action_settings -> {
+                val intent = Intent(this@HomeActivity, SettingsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -131,7 +147,9 @@ class HomeActivity : AppCompatActivity() {
         uid?.let {
             objRef.child(it).child("Playing").setValue(playing)
             objRef.addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
+                    objRef.removeEventListener(this)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -152,16 +170,13 @@ class HomeActivity : AppCompatActivity() {
                 Log.i("HomeActivity",""+count)
                 if (isChecked && count < 10) {
                     update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
-                    switch_btn.setChecked(checked = true, alsoNotify = false)
                     switch_btn.text = getString(R.string.joined)
                     playersQuery.removeEventListener(this)
                 } else if (!isChecked) {
-                    switch_btn.setChecked(checked = false, alsoNotify = false)
                     update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
                     switch_btn.text = getString(R.string.notjoining)
                     playersQuery.removeEventListener(this)
                 }else{
-                    switch_btn.setChecked(checked = false, alsoNotify = false)
                     playersQuery.removeEventListener(this)
                 }
 
@@ -169,6 +184,7 @@ class HomeActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
+                playersQuery.removeEventListener(this)
             }
         })
     }
