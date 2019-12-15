@@ -16,6 +16,8 @@ import androidx.work.WorkManager
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
 import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
+import com.example.raghu.tiger5regulars.utilities.getCurrentDateTime
+import com.example.raghu.tiger5regulars.utilities.toStringFormat
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -147,6 +149,9 @@ class HomeActivity : AppCompatActivity() {
         val objRef = database.child("Players")
         uid?.let {
             objRef.child(it).child("Playing").setValue(playing)
+            val date = getCurrentDateTime()
+            val dateInString = date.toStringFormat("dd/MM/yyyy")
+            objRef.child(it).child("Today").setValue(dateInString)
             objRef.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
@@ -158,7 +163,6 @@ class HomeActivity : AppCompatActivity() {
                 }
 
             })
-
         }
     }
 

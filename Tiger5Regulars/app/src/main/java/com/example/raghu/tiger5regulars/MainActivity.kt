@@ -12,7 +12,6 @@ import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.Listener
-import com.example.raghu.tiger5regulars.utilities.toStringFromat
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -60,33 +59,6 @@ class MainActivity : AppCompatActivity(), Listener {
             }
         })
 
-      /*  playersQuery.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-                val user: User? = dataSnapshot.getValue<User>(User::class.java)
-               user?.let {
-                   if(membersList.size==0 || !membersList.contains(user)){
-                       membersList.add(user)
-                       partitionTeam(membersList)
-                   }
-               }
-            }
-
-            override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-                val user: User? = dataSnapshot.getValue<User>(User::class.java)
-                user?.let {
-                    if(user.Playing && membersList.contains(user)){
-                        membersList.add(user)
-                        partitionTeam(membersList)
-                    }else if(!user.Playing && membersList.contains(user)) {
-                        membersList.remove(user)
-                        partitionTeam(membersList)
-                    }
-                }
-            }
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
-            override fun onChildMoved(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })*/
 
         boardView.setOnItemClickListener { v, column_pos, item_pos ->
 
@@ -192,15 +164,13 @@ class MainActivity : AppCompatActivity(), Listener {
 
     private fun partitionTeam(mem: ArrayList<User>) {
 
+        val hashCodeComparator = Comparator { user1: User, user2: User -> user1.hashCode() - user2.hashCode() }
+
+        Collections.sort(mem,hashCodeComparator)
         Log.i("Size",""+mem.size)
         for (i in 0 until mem.size) {
             val user = mem[i]
-            val userid = user.userId
-            val date = getCurrentDateTime()
-            val dateInString = date.toStringFromat("dd/MM/yyyy")
-            val array : Array<String?> = arrayOf(dateInString,userid)
-            val hashLong = hash(array)
-            Log.i("hashCode",""+hashLong+" "+user.Name)
+            Log.i("Name",""+user.Name)
             user.Name?.let { members.add(it) }
             if (i % 2 == 0) {
                 user.Name?.let { listA.add(it) }
@@ -210,17 +180,8 @@ class MainActivity : AppCompatActivity(), Listener {
         }
     }
 
-    fun hash(values: Array<String?>): Long {
-        var result: Long = 17
-        for (v in values) result = 37 * result + v.hashCode()
-        return result
-    }
-
-    private fun getCurrentDateTime(): Date {
-        return Calendar.getInstance().time
-    }
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item != null && item.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
            finish()
         }
         return super.onOptionsItemSelected(item)

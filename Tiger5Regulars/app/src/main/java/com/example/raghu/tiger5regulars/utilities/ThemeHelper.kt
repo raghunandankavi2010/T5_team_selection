@@ -19,9 +19,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 
 object ThemeHelper {
-    const val LIGHT_MODE = "light"
-    const val DARK_MODE = "dark"
-    const val DEFAULT_MODE = "default"
+    private const val LIGHT_MODE = "light"
+    private const val DARK_MODE = "dark"
+    const val DEFAULT_MODE: String = "default"
     fun applyTheme(themePref: String) {
         when (themePref) {
             LIGHT_MODE -> {

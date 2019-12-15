@@ -10,10 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.models.UserProfile
-import com.example.raghu.tiger5regulars.utilities.PREF_NAME
-import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
-import com.example.raghu.tiger5regulars.utilities.RC_SIGN_IN
-import com.example.raghu.tiger5regulars.utilities.toStringFromat
+import com.example.raghu.tiger5regulars.utilities.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -106,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
             database = FirebaseDatabase.getInstance().reference
             postUserDetails(user)
             val date = getCurrentDateTime()
-            val dateInString = date.toStringFromat("dd/MM/yyyy")
+            val dateInString = date.toStringFormat("dd/MM/yyyy")
             writeNewUser(it.uid, it.displayName, false, dateInString)
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
             sharedPref.edit {
@@ -137,9 +134,6 @@ class LoginActivity : AppCompatActivity() {
         database.updateChildren(childUpdates)
     }
 
-    private fun getCurrentDateTime(): Date {
-        return Calendar.getInstance().time
-    }
 
     private fun writeNewUser(uid: String, name: String?, playing: Boolean, today: String) {
         val user = User(name, playing, today)

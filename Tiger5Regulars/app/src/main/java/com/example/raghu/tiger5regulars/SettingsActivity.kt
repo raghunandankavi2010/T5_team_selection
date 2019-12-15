@@ -24,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
             setPreferencesFromResource(R.xml.preferences, rootKey)
             val themePreference = findPreference<ListPreference>("themePref")
             if (themePreference != null) {
-                themePreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+                themePreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
                     val themeOption = newValue as String
                     ThemeHelper.applyTheme(themeOption)
                     true
