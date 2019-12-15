@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Constraints
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.raghu.tiger5regulars.models.User
@@ -56,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
             database = FirebaseDatabase.getInstance().reference
 
             val constraints = Constraints.Builder()
-                    .setRequiresCharging(true)
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
 
             val currentDate = Calendar.getInstance()

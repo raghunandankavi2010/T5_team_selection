@@ -6,14 +6,14 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.raghu.tiger5regulars.utilities.PREF_NAME
+import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
-    private val PREF_NAME = "login"
-    private var PRIVATE_MODE = 0
     override fun doWork(): Result {
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
