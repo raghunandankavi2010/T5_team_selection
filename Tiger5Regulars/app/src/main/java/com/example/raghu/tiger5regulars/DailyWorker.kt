@@ -2,10 +2,7 @@ package com.example.raghu.tiger5regulars
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
 import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
 import com.google.firebase.database.FirebaseDatabase
@@ -26,7 +23,12 @@ class DailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) 
             dueDate.add(Calendar.HOUR_OF_DAY, 24)
         }
         val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
+        val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
         val dailyWorkRequest = OneTimeWorkRequestBuilder<DailyWorker>()
+                .setConstraints(constraints)
                 .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
                 .addTag("TAG_OUTPUT")
                 .build()
