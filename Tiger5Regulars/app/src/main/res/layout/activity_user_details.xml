@@ -23,6 +23,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <ImageView
+        android:contentDescription="@string/profile_image"
         android:id="@+id/imageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
