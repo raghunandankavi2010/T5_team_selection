@@ -4,7 +4,7 @@
     <!-- app palette -->
     <color name="colorPrimary">#8BCAF3</color>
     <color name="colorPrimaryDark">#000000</color> >
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#673AB7</color>
     <color name="hamburgerIconColor">#ffffff</color>
 
 </resources>
