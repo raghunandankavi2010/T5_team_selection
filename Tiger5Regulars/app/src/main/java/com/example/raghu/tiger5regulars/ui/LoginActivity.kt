@@ -1,4 +1,4 @@
-package com.example.raghu.tiger5regulars
+package com.example.raghu.tiger5regulars.ui
 
 
 import android.content.Intent
@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.models.UserProfile
 import com.example.raghu.tiger5regulars.utilities.*

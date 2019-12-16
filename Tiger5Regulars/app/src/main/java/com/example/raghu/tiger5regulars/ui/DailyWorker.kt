@@ -1,4 +1,4 @@
-package com.example.raghu.tiger5regulars
+package com.example.raghu.tiger5regulars.ui
 
 import android.content.Context
 import android.content.SharedPreferences

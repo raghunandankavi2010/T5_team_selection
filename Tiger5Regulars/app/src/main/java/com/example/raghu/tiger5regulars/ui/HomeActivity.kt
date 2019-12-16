@@ -1,4 +1,4 @@
-package com.example.raghu.tiger5regulars
+package com.example.raghu.tiger5regulars.ui
 
 
 import android.content.Intent
@@ -14,6 +14,7 @@ import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
 import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE

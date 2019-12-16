@@ -1,10 +1,11 @@
-package com.example.raghu.tiger5regulars
+package com.example.raghu.tiger5regulars.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.utilities.ThemeHelper
 
 class SettingsActivity : AppCompatActivity() {

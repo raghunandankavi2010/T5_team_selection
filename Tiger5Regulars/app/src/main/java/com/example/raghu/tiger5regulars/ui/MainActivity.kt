@@ -1,4 +1,4 @@
-package com.example.raghu.tiger5regulars
+package com.example.raghu.tiger5regulars.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.allyants.boardview.BoardAdapter
 import com.allyants.boardview.BoardView
 import com.allyants.boardview.SimpleBoardAdapter
+import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.Listener
 import com.google.firebase.database.*
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity(), Listener {
             if(membersList.size>0 && column_pos==0){
 
                 val userId = membersList[item_pos].userId
-                val intent = Intent(this@MainActivity,UserDetails::class.java)
+                val intent = Intent(this@MainActivity, UserDetails::class.java)
                 intent.putExtra("userid",userId)
                 startActivity(intent)
             }
