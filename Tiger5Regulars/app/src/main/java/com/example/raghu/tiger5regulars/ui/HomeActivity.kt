@@ -9,10 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
@@ -63,20 +60,21 @@ class HomeActivity : AppCompatActivity() {
 
             val currentDate = Calendar.getInstance()
             val dueDate = Calendar.getInstance()
-            dueDate.set(Calendar.AM_PM, Calendar.PM)
-            dueDate.set(Calendar.HOUR_OF_DAY, 12)
+            dueDate.set(Calendar.AM_PM, Calendar.AM)
+            dueDate.set(Calendar.HOUR_OF_DAY, 1)
             dueDate.set(Calendar.MINUTE, 0)
             dueDate.set(Calendar.SECOND, 0)
             if (dueDate.before(currentDate)) {
                 dueDate.add(Calendar.HOUR_OF_DAY, 24)
             }
-            val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
+            val timeDiff = dueDate.timeInMillis  - currentDate.timeInMillis
             val dailyWorkRequest = OneTimeWorkRequestBuilder<DailyWorker>()
                     .setConstraints(constraints)
                     .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
                     .addTag("TAG_OUTPUT")
                     .build()
-            WorkManager.getInstance(applicationContext).enqueue(dailyWorkRequest)
+            WorkManager.getInstance(applicationContext)
+                    .enqueueUniqueWork("DailyWork", ExistingWorkPolicy.KEEP,dailyWorkRequest)
             switch_btn.setOnClickListener { view ->
                 if (view is CheckBox) {
                     val isChecked = view.isChecked
@@ -88,7 +86,6 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(Intent(this@HomeActivity, MainActivity::class.java))
             }
         }
-
     }
 
     override fun onResume() {
@@ -115,7 +112,7 @@ class HomeActivity : AppCompatActivity() {
 
                 override fun onCancelled(databaseError: DatabaseError) {
                     isUserPlaying.removeEventListener(this)
-                    Timber.tag("HomeActivity").w(databaseError.toException(), "loadPost:onCancelled")
+                    Timber.w(databaseError.toException(), "loadPost:onCancelled")
                 }
             })
         }
@@ -156,7 +153,7 @@ class HomeActivity : AppCompatActivity() {
             objRef.child(it).child("Today").setValue(dateInString)
             objRef.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(databaseError: DatabaseError) {
-                    Timber.tag("HomeActivity").w(databaseError.toException(), "loadPost:onCancelled")
+                    Timber.w(databaseError.toException(), "loadPost:onCancelled")
                     objRef.removeEventListener(this)
                 }
 
@@ -197,4 +194,5 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
+
 }

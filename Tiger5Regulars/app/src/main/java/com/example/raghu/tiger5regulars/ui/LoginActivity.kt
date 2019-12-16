@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
                 firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
 
-                Log.w("LoginActivity", "Google sign in failed", e)
+                Timber.tag("LoginActivity").w(e, "Google sign in failed")
 
                 updateUI(null)
 
@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-       Timber.d("firebaseAuthWithGoogle:" + acct.id!!)
+       Timber.d("firebaseAuthWithGoogle:%s", acct.id!!)
         showProgress()
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)

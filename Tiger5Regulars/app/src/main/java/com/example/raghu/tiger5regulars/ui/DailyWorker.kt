@@ -6,17 +6,19 @@ import androidx.work.*
 import com.example.raghu.tiger5regulars.utilities.PREF_NAME
 import com.example.raghu.tiger5regulars.utilities.PRIVATE_MODE
 import com.google.firebase.database.FirebaseDatabase
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     override fun doWork(): Result {
+        Timber.i("WorkManger doing work")
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
         // Set Execution around 12:00:00 PM
-        dueDate.set(Calendar.AM_PM,Calendar.PM)
-        dueDate.set(Calendar.HOUR_OF_DAY, 12)
+        dueDate.set(Calendar.AM_PM,Calendar.AM)
+        dueDate.set(Calendar.HOUR_OF_DAY, 1)
         dueDate.set(Calendar.MINUTE, 0)
         dueDate.set(Calendar.SECOND, 0)
         if (dueDate.before(currentDate)) {
@@ -33,13 +35,16 @@ class DailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) 
                 .addTag("TAG_OUTPUT")
                 .build()
         WorkManager.getInstance(applicationContext)
-                .enqueue(dailyWorkRequest)
+                .enqueueUniqueWork("DailyWork",ExistingWorkPolicy.KEEP,dailyWorkRequest)
         val appContext = applicationContext
         val sharedPref: SharedPreferences = appContext.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         val database = FirebaseDatabase.getInstance().reference
         val id = sharedPref.getString("id",null)
-        val ref = id?.let { database.child(it) }
-        val playersQuery = ref?.child("Playing")?.setValue(false)
+        val objRef = database.child("Players")
+        id?.let {
+            objRef.child(it).child("Playing").setValue(false)
+        }
+
         return Result.success()
     }
 }
