@@ -7,11 +7,10 @@
     android:background="@color/white"
     android:gravity="center_horizontal">
     <TextView
-        tools:text="Hello World this is a test"
+        tools:text="Raghunandan Kavi"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
         android:textAlignment="center"
-        android:maxWidth="240dp"
         android:textSize="20sp"
-        android:layout_width="200dp" />
+        android:layout_width="wrap_content" />
 </LinearLayout>
