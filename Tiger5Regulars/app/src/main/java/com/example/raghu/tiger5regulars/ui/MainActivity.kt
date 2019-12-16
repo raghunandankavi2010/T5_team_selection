@@ -104,36 +104,6 @@ class MainActivity : AppCompatActivity(), Listener {
         })
     }
 
-
-    fun check_column1(): Boolean {
-        val columnAtIndex1 = boardAdapter.getColumnAtIndex(1)
-        when {
-            columnAtIndex1.getObjects().size >= 5 -> {
-                columnAtIndex1.items_locked = true
-                return true
-            }
-            else -> {
-                columnAtIndex1.items_locked = false
-                return false
-            }
-        }
-    }
-
-    fun check_column2(): Boolean {
-        val columnAtIndex2 = boardAdapter.getColumnAtIndex(2)
-        when {
-            columnAtIndex2.getObjects().size >= 5 -> {
-                columnAtIndex2.items_locked = true
-                return true
-            }
-            else -> {
-                columnAtIndex2.items_locked = false
-                return false
-            }
-        }
-    }
-
-
     override fun onSuccess(dataSnapshot: DataSnapshot?) {
         if (dataSnapshot != null) {
             if(membersList.size>0){
@@ -160,6 +130,10 @@ class MainActivity : AppCompatActivity(), Listener {
 
             boardAdapter = SimpleBoardAdapter(this@MainActivity, data)
             boardView.setAdapter(boardAdapter)
+            val columnAtIndex1 = boardAdapter.getColumnAtIndex(1)
+            val columnAtIndex2 = boardAdapter.getColumnAtIndex(2)
+            columnAtIndex2.items_locked = true
+            columnAtIndex1.items_locked = true
         }
     }
 
