@@ -4,7 +4,6 @@ package com.example.raghu.tiger5regulars.ui
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -115,7 +115,7 @@ class HomeActivity : AppCompatActivity() {
 
                 override fun onCancelled(databaseError: DatabaseError) {
                     isUserPlaying.removeEventListener(this)
-                    Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
+                    Timber.tag("HomeActivity").w(databaseError.toException(), "loadPost:onCancelled")
                 }
             })
         }
@@ -156,7 +156,7 @@ class HomeActivity : AppCompatActivity() {
             objRef.child(it).child("Today").setValue(dateInString)
             objRef.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(databaseError: DatabaseError) {
-                    Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
+                    Timber.tag("HomeActivity").w(databaseError.toException(), "loadPost:onCancelled")
                     objRef.removeEventListener(this)
                 }
 
@@ -174,7 +174,7 @@ class HomeActivity : AppCompatActivity() {
         playersQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 count = dataSnapshot.children.count()
-                Log.i("HomeActivity",""+count)
+                Timber.i("Count =$count")
                 if (isChecked && count < 10) {
                     update(sharedPref.getString(PREF_NAME, null), isChecked, sharedPref.getString("id", null))
                     switch_btn.text = getString(R.string.joined)
@@ -192,7 +192,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("HomeActivity", "loadPost:onCancelled", databaseError.toException())
+                Timber.tag("HomeActivity").w(databaseError.toException(), "loadPost:onCancelled")
                 playersQuery.removeEventListener(this)
             }
         })

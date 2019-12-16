@@ -2,7 +2,6 @@ package com.example.raghu.tiger5regulars.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -15,6 +14,7 @@ import com.example.raghu.tiger5regulars.models.User
 import com.example.raghu.tiger5regulars.utilities.Listener
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), Listener {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("MainActivity", "loadPost:onCancelled", databaseError.toException())
+               Timber.tag("MainActivity").w(databaseError.toException(), "loadPost:onCancelled")
             }
         })
 
@@ -142,10 +142,10 @@ class MainActivity : AppCompatActivity(), Listener {
         val hashCodeComparator = Comparator { user1: User, user2: User -> user1.hashCode() - user2.hashCode() }
 
         Collections.sort(mem,hashCodeComparator)
-        Log.i("Size",""+mem.size)
+        Timber.i("Size: ${mem.size}")
         for (i in 0 until mem.size) {
             val user = mem[i]
-            Log.i("Name",""+user.Name)
+            Timber.i("Name: ${user.Name}")
             user.Name?.let { members.add(it) }
             if (i % 2 == 0) {
                 user.Name?.let { listA.add(it) }

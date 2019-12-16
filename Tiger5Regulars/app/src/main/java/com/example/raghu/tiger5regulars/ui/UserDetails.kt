@@ -10,6 +10,7 @@ import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.models.UserProfile
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_user_details.*
+import timber.log.Timber
 
 
 class UserDetails : AppCompatActivity() {
@@ -30,7 +31,7 @@ class UserDetails : AppCompatActivity() {
             val radius = resources.getDimensionPixelSize(R.dimen.profile_corner_radius)
             profileQuery.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    Timber.w(p0.message)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

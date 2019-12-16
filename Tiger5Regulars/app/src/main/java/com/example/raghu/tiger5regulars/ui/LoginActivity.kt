@@ -25,6 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.login.*
+import timber.log.Timber
 import java.util.*
 
 
@@ -73,19 +74,19 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        Log.d("LoginActivity", "firebaseAuthWithGoogle:" + acct.id!!)
+       Timber.d("firebaseAuthWithGoogle:" + acct.id!!)
         showProgress()
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Log.d("LoginActivity", "signInWithCredential:success")
+                        Timber.d("signInWithCredential:success")
                         val user = auth.currentUser
                         updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w("LoginActivity", "signInWithCredential:failure", task.exception)
+                        Timber.tag("LoginActivity").w(task.exception, "signInWithCredential:failure")
                         Snackbar.make(main_layout, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
                         updateUI(null)
                     }
