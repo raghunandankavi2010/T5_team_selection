@@ -139,9 +139,8 @@ class MainActivity : AppCompatActivity(), Listener {
 
     private fun partitionTeam(mem: ArrayList<User>) {
 
-        val hashCodeComparator = Comparator { user1: User, user2: User -> user1.hashCode() - user2.hashCode() }
-
-        Collections.sort(mem,hashCodeComparator)
+       // val hashCodeComparator = Comparator { user1: User, user2: User -> user1.hashCode() - user2.hashCode() }
+       // Collections.sort(mem,hashCodeComparator)
         Timber.i("Size: ${mem.size}")
         for (i in 0 until mem.size) {
             val user = mem[i]
