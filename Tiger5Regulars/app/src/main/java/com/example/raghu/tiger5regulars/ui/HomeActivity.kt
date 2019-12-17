@@ -60,21 +60,32 @@ class HomeActivity : AppCompatActivity() {
 
             val currentDate = Calendar.getInstance()
             val dueDate = Calendar.getInstance()
-            dueDate.set(Calendar.AM_PM, Calendar.AM)
             dueDate.set(Calendar.HOUR_OF_DAY, 1)
-            dueDate.set(Calendar.MINUTE, 0)
+            dueDate.set(Calendar.MINUTE,0)
             dueDate.set(Calendar.SECOND, 0)
             if (dueDate.before(currentDate)) {
                 dueDate.add(Calendar.HOUR_OF_DAY, 24)
+                Timber.i("Due date before current date ")
             }
             val timeDiff = dueDate.timeInMillis  - currentDate.timeInMillis
+            Timber.i("Time Diff $timeDiff ")
             val dailyWorkRequest = OneTimeWorkRequestBuilder<DailyWorker>()
                     .setConstraints(constraints)
                     .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
                     .addTag("TAG_OUTPUT")
                     .build()
             WorkManager.getInstance(applicationContext)
-                    .enqueueUniqueWork("DailyWork", ExistingWorkPolicy.KEEP,dailyWorkRequest)
+                    .enqueueUniqueWork("DailyWork", ExistingWorkPolicy.REPLACE,dailyWorkRequest)
+            WorkManager.getInstance(applicationContext).getWorkInfoByIdLiveData(dailyWorkRequest.id)
+                    .observe(this@HomeActivity, androidx.lifecycle.Observer { workInfo ->
+                        if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                            Timber.i("WorkManger Finished")
+                        }else if(workInfo != null && workInfo.state == WorkInfo.State.ENQUEUED) {
+                            Timber.i("WorkManger Enqueued")
+                        }else if(workInfo != null && workInfo.state == WorkInfo.State.RUNNING) {
+                            Timber.i("WorkManger Running")
+                        }
+                    })
             switch_btn.setOnClickListener { view ->
                 if (view is CheckBox) {
                     val isChecked = view.isChecked

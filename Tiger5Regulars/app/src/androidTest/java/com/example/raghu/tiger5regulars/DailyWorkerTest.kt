@@ -32,7 +32,7 @@ class DailyWorkerTest {
 
         // Enqueue and wait for result. This also runs the Worker synchronously
         // because we are using a SynchronousExecutor.
-        wmRule.workManager.enqueue(dailyWorkRequest).result.get()
+        wmRule.workManager.enqueueUniqueWork("DailyWorker",ExistingWorkPolicy.REPLACE,dailyWorkRequest).result.get()
         // Get WorkInfo
         val workInfo = wmRule.workManager.getWorkInfoById(dailyWorkRequest.id).get()
 
@@ -53,7 +53,7 @@ class DailyWorkerTest {
 
         val testDriver = WorkManagerTestInitHelper.getTestDriver(wmRule.testContext)
         // Enqueue and wait for result.
-        wmRule.workManager.enqueue(dailyWorkRequest).result.get()
+        wmRule.workManager.enqueueUniqueWork("DailyWorker",ExistingWorkPolicy.REPLACE,dailyWorkRequest).result.get()
         testDriver?.setInitialDelayMet(dailyWorkRequest.id)
         // Get WorkInfo and outputData
         val workInfo = wmRule.workManager.getWorkInfoById(dailyWorkRequest.id).get()
@@ -77,7 +77,7 @@ class DailyWorkerTest {
 
         val testDriver = WorkManagerTestInitHelper.getTestDriver(wmRule.testContext)
         // Enqueue and wait for result.
-        wmRule.workManager.enqueue(dailyWorkRequest).result.get()
+        wmRule.workManager.enqueueUniqueWork("DailyWorker",ExistingWorkPolicy.REPLACE,dailyWorkRequest).result.get()
         testDriver?.setAllConstraintsMet(dailyWorkRequest.id)
         // Get WorkInfo and outputData
         val workInfo = wmRule.workManager.getWorkInfoById(dailyWorkRequest.id).get()
