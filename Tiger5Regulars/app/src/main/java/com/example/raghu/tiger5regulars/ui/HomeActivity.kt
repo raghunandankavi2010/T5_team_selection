@@ -96,6 +96,10 @@ class HomeActivity : AppCompatActivity() {
             viewTeam.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, MainActivity::class.java))
             }
+
+            map.setOnClickListener {
+                startActivity(Intent(this@HomeActivity,MapsActivity::class.java))
+            }
         }
     }
 

@@ -11,5 +11,7 @@
     <string name="notjoining">Do you want to play Today?</string>
     <string name="info">If 10 people have already joined, when you check the checkbox it becomes disabled. If not to join check the check box. To view Team click the View Team Button.</string>
     <string name="profile_image">Profile image</string>
+    <string name="map">Map Direction</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>
