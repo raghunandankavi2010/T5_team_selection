@@ -16,7 +16,7 @@ class DailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) 
         Timber.i("WorkManger doing work")
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
-        // Set Execution around 12:00:00 PM
+        // Set Execution around 1:00:00 AM
         dueDate.set(Calendar.AM_PM,Calendar.PM)
         dueDate.set(Calendar.HOUR_OF_DAY, 1)
         dueDate.set(Calendar.MINUTE, 0)
