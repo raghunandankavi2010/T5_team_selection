@@ -37,8 +37,10 @@ class HomeActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         if (auth.currentUser == null) {
             val intent = Intent(this@HomeActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            intent.apply {
+                startActivity(this)
+                finish()
+            }
         } else {
             setContentView(R.layout.activity_home)
             setSupportActionBar(toolbar)
@@ -94,11 +96,18 @@ class HomeActivity : AppCompatActivity() {
 
             }
             viewTeam.setOnClickListener {
-                startActivity(Intent(this@HomeActivity, MainActivity::class.java))
+               val intent = Intent(this@HomeActivity, MainActivity::class.java)
+                intent.apply {
+                    startActivity(this)
+                }
+
             }
 
             map.setOnClickListener {
-                startActivity(Intent(this@HomeActivity,MapsActivity::class.java))
+                val intent = Intent(this@HomeActivity,MapsActivity::class.java)
+                intent.apply {
+                    startActivity(this)
+                }
             }
         }
     }

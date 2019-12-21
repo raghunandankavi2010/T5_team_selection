@@ -67,8 +67,10 @@ class MainActivity : AppCompatActivity(), Listener {
 
                 val userId = membersList[item_pos].userId
                 val intent = Intent(this@MainActivity, UserDetails::class.java)
-                intent.putExtra("userid",userId)
-                startActivity(intent)
+                intent.apply {
+                    putExtra("userid",userId)
+                    startActivity(this)
+                }
             }
         }
 

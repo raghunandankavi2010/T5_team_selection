@@ -112,7 +112,9 @@ class LoginActivity : AppCompatActivity() {
                 putString(PREF_NAME, it.displayName)
                 putString("id", it.uid)
             }
-            startActivity(intent)
+            intent.apply {
+                startActivity(this)
+            }
             finish()
         }
     }
