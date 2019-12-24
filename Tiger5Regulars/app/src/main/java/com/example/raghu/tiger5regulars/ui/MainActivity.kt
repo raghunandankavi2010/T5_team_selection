@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), Listener {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
+                pBar.visibility = View.GONE
                Timber.tag("MainActivity").w(databaseError.toException(), "loadPost:onCancelled")
             }
         })
