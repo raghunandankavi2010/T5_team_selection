@@ -10,6 +10,7 @@ import com.example.raghu.tiger5regulars.R
 import com.example.raghu.tiger5regulars.models.UserProfile
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_user_details.*
+import kotlinx.android.synthetic.main.toolbar.*
 import timber.log.Timber
 
 

@@ -25,6 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.login.*
+import kotlinx.android.synthetic.main.toolbar.*
 import timber.log.Timber
 import java.util.*
 
